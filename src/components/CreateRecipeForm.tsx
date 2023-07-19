@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import React, { ChangeEventHandler, SetStateAction, useState } from "react";
 import { InferModel, desc } from "drizzle-orm";
-import { ingredients, recipeingredients } from "@/db/schema";
+import { ingredients, recipeIngredients } from "@/db/schema";
 import { HiXCircle } from "react-icons/hi";
 
 type Ingredient = {

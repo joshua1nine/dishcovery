@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "introspect": "drizzle-kit introspect:mysql",
-    "generate": "drizzle-kit generate:mysql"
+    "generate": "drizzle-kit generate:mysql",
+    "migrate": "drizzle-kit push:mysql"
   },
   "dependencies": {
     "@planetscale/database": "^1.8.0",

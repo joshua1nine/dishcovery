@@ -14,6 +14,13 @@ export const categories = mysqlTable("categories", {
   name: varchar("name", { length: 255 }).notNull(),
 });
 
+export const recipeDirections = mysqlTable("recipedirections", {
+  id: int("id").autoincrement().primaryKey().notNull(),
+  step: int("step").notNull(),
+  description: text("description").notNull(),
+  recipeId: int("recipe_id").notNull(),
+});
+
 export const ingredients = mysqlTable(
   "ingredients",
   {
@@ -31,7 +38,7 @@ export const ingredients = mysqlTable(
 );
 
 export const ingredientsRelations = relations(ingredients, ({ many, one }) => ({
-  recipeingredients: many(recipeingredients),
+  recipeingredients: many(recipeIngredients),
   units: one(units, {
     fields: [ingredients.unitId],
     references: [units.id],
@@ -42,7 +49,7 @@ export const ingredientsRelations = relations(ingredients, ({ many, one }) => ({
   }),
 }));
 
-export const recipeingredients = mysqlTable(
+export const recipeIngredients = mysqlTable(
   "recipeingredients",
   {
     id: int("id").autoincrement().primaryKey().notNull(),
@@ -60,14 +67,14 @@ export const recipeingredients = mysqlTable(
 );
 
 export const recipeingredientsRelations = relations(
-  recipeingredients,
+  recipeIngredients,
   ({ one }) => ({
     ingredient: one(ingredients, {
-      fields: [recipeingredients.ingredientId],
+      fields: [recipeIngredients.ingredientId],
       references: [ingredients.id],
     }),
     recipe: one(recipes, {
-      fields: [recipeingredients.recipeId],
+      fields: [recipeIngredients.recipeId],
       references: [recipes.id],
     }),
   })
@@ -79,12 +86,12 @@ export const recipes = mysqlTable("recipes", {
   prepTime: varchar("prep_time", { length: 255 }),
   cookTime: varchar("cook_time", { length: 255 }),
   servings: int("servings"),
-  directions: text("directions").notNull(),
   notes: text("notes"),
 });
 
 export const recipesRelations = relations(recipes, ({ many }) => ({
-  recipeingredients: many(recipeingredients),
+  recipeingredients: many(recipeIngredients),
+  recipeDirections: many(recipeDirections),
 }));
 
 export const units = mysqlTable("units", {
