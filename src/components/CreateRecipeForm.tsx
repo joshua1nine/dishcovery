@@ -6,6 +6,7 @@ import { InferModel, desc } from "drizzle-orm";
 import { ingredients, recipeIngredients } from "@/db/schema";
 import { HiXCircle } from "react-icons/hi";
 import { nanoid } from "nanoid";
+import NotesInput from "./NotesInput";
 
 type Ingredient = {
   public_id: string;
@@ -84,6 +85,8 @@ export default function CreateRecipeForm({
   const handleRemoveDirection = (dir: string) => {
     setDirections(directions.filter((curDir) => curDir !== dir));
   };
+
+  console.log("notes", notes);
 
   return (
     <form onSubmit={create} className="space-y-4">
@@ -282,7 +285,8 @@ export default function CreateRecipeForm({
         )}
       </div>
       {/* <h3 className="font-bold text-lg">Notes</h3> */}
-      <div className="flex flex-col space-y-2">
+      <NotesInput notes={notes} setNotes={setNotes} />
+      {/* <div className="flex flex-col space-y-2">
         <label htmlFor="notes" className="font-semibold">
           Notes
         </label>
@@ -292,7 +296,7 @@ export default function CreateRecipeForm({
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
         />
-      </div>
+      </div> */}
       <button
         className="p-4 rounded my-3 w-full font-semibold text-white bg-purple-500"
         type="submit"

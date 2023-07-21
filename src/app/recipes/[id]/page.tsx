@@ -38,7 +38,10 @@ export default async function Recipes({ params }: { params: { id: string } }) {
           </div>
           <div>
             <h3 className="text-lg font-semibold mb-2">Notes</h3>
-            <p>{recipe?.notes}</p>
+            <div
+              className="prose"
+              dangerouslySetInnerHTML={{ __html: recipe?.notes as string }}
+            ></div>
           </div>
           <div>
             <h3 className="text-lg font-semibold mb-2">Ingredients</h3>
