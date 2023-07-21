@@ -9,7 +9,7 @@ export default function IngredientsList({ ingredient }: { ingredient: any }) {
 
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     const res = await fetch(`http://localhost:3000/api/ingredients/delete`, {
       method: "POST",
       headers: {
@@ -28,14 +28,14 @@ export default function IngredientsList({ ingredient }: { ingredient: any }) {
   };
 
   return (
-    <div key={ingredient.id} className="grid grid-cols-[3fr,2fr,1fr]">
+    <div key={ingredient.public_id} className="grid grid-cols-[3fr,2fr,1fr]">
       <span className="p-2 pl-0">{ingredient.name}</span>
       <span className="p-2">{ingredient.category}</span>
       <div className="flex items-center justify-between">
         <span className="p-2 pr-0">{ingredient.unit}</span>
         <HiXCircle
           className="w-6 h-6 text-red-600 cursor-pointer"
-          onClick={() => handleDelete(ingredient.id)}
+          onClick={() => handleDelete(ingredient.public_id)}
         />
       </div>
       {errorMessage && <p className="text-red-600">{errorMessage}</p>}

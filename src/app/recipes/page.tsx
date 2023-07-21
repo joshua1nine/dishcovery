@@ -19,14 +19,14 @@ export default async function Recipes() {
         >
           Add
         </Link>
-        <div className="flex">
+        <div className="flex flex-col">
           {recipes?.map((recipe) => {
             return (
               <div
-                key={recipe.id}
+                key={recipe.public_id}
                 className="flex justify-between items-center w-full p-2 rounded hover:bg-purple-50 cursor-pointer"
               >
-                <Link href={`/recipes/${recipe.id}`}>
+                <Link href={`/recipes/${recipe.public_id}`}>
                   <div>
                     <p className="font-bold text-lg">{recipe.name}</p>
                     <span className="text-sm text-gray-600">

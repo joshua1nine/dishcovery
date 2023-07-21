@@ -15,6 +15,69 @@
       "when": 1689773776902,
       "tag": "0001_bright_emma_frost",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1689800626792,
+      "tag": "0002_striped_living_tribunal",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1689801686069,
+      "tag": "0003_workable_unus",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1689802406255,
+      "tag": "0004_light_ender_wiggin",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1689802861844,
+      "tag": "0005_white_yellow_claw",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1689802970549,
+      "tag": "0006_nasty_silhouette",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1689804356778,
+      "tag": "0007_nappy_roulette",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1689804530959,
+      "tag": "0008_crazy_alice",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1689807675567,
+      "tag": "0009_young_galactus",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1689878424984,
+      "tag": "0010_curvy_hawkeye",
+      "breakpoints": true
     }
   ]
 }

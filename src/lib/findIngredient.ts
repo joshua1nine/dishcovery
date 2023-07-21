@@ -5,12 +5,12 @@ import * as schema from "../db/schema";
 import { ingredients, recipeIngredients } from "../db/schema";
 import { eq } from "drizzle-orm";
 
-export default async function findIngredient(id: number) {
+export default async function findIngredient(id: string) {
   const connection = connect(config);
   const db = drizzle(connection, { schema });
 
   const ingredient = await db.query.ingredients.findFirst({
-    where: eq(ingredients.id, id),
+    where: eq(ingredients.public_id, id),
   });
 
   const usedInRecipes = await db.query.recipeIngredients.findFirst({

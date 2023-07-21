@@ -9,7 +9,7 @@ export default async function getAllRecipes() {
 
   const results = await db.query.recipes.findMany({
     columns: {
-      id: true,
+      public_id: true,
       name: true,
       prepTime: true,
       cookTime: true,

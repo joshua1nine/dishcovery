@@ -10,14 +10,14 @@ export default async function getAllIngredients() {
 
   const results = await db
     .select({
-      id: ingredients.id,
+      public_id: ingredients.public_id,
       name: ingredients.name,
       category: categories.name,
       unit: units.name,
     })
     .from(ingredients)
-    .innerJoin(categories, eq(ingredients.categoryId, categories.id))
-    .innerJoin(units, eq(ingredients.unitId, units.id));
+    .innerJoin(categories, eq(ingredients.categoryId, categories.public_id))
+    .innerJoin(units, eq(ingredients.unitId, units.public_id));
 
   return results;
 }

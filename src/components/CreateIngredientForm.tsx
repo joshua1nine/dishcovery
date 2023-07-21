@@ -44,7 +44,7 @@ export default function CreateIngredientForm({
       >
         <option value="">Category</option>
         {categories.map((category: any) => {
-          return <option value={category.id}>{category.name}</option>;
+          return <option value={category.public_id}>{category.name}</option>;
         })}
       </select>
       <select
@@ -55,7 +55,7 @@ export default function CreateIngredientForm({
       >
         <option value="">Unit</option>
         {units.map((unit: any) => {
-          return <option value={unit.id}>{unit.name}</option>;
+          return <option value={unit.public_id}>{unit.name}</option>;
         })}
       </select>
       <button
