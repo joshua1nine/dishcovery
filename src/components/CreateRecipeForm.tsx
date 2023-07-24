@@ -1,308 +1,299 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React, { ChangeEventHandler, SetStateAction, useState } from "react";
-import { InferModel, desc } from "drizzle-orm";
-import { ingredients, recipeIngredients } from "@/db/schema";
-import { HiXCircle } from "react-icons/hi";
 import { nanoid } from "nanoid";
-import NotesInput from "./NotesInput";
+import RichTextInput from "./RichTextInput";
+import { insertRecipeIngredientSchema } from "@/db/schema/recipeIngredient";
+import { Ingredient, insertIngredientSchema } from "@/db/schema/ingredient";
+import { Unit } from "@/db/schema/unit";
+import {
+  SubmitHandler,
+  useForm,
+  useFieldArray,
+  FieldErrors,
+} from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { insertRecipeSchema } from "@/db/schema/recipe";
+import { FaPlus } from "react-icons/fa6";
+import SubmitBtn from "./SubmitBtn";
+import { GetAllIngredients } from "@/lib/getAllIngredients";
 
-type Ingredient = {
-  public_id: string;
-  name: string;
-  category: string;
-  unit: string;
-};
+const newRecipeFormSchema = insertRecipeSchema.extend({
+  ingredients: z.array(insertRecipeIngredientSchema),
+});
 
-type RecipeIngredient = {
-  ingredientId: string;
-  ingredientName: string;
-  ingredientQty: number;
-  ingredientDesc: string;
-  ingredientUnit: string;
-};
+export type NewRecipeFormValues = z.infer<typeof newRecipeFormSchema>;
+
+const recipe_id = nanoid();
 
 export default function CreateRecipeForm({
   ingredients,
+  units,
 }: {
-  ingredients: any;
+  ingredients: Ingredient[];
+  units: Unit[];
 }) {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [prepTime, setPrepTime] = useState(0);
-  const [cookTime, setCookTime] = useState(0);
-  const [serves, setServes] = useState(0);
-  const [ingredientQty, setIngredientQty] = useState(0);
-  const [ingredientDesc, setIngredientDesc] = useState("");
-  const [nextIngredient, setNextIngredient] = useState<Ingredient>({
-    public_id: "",
-    name: "",
-    category: "",
-    unit: "",
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    control,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<NewRecipeFormValues>({
+    resolver: zodResolver(newRecipeFormSchema),
+    defaultValues: {
+      public_id: recipe_id,
+      name: "",
+      prepTime: NaN,
+      cookTime: NaN,
+      servings: NaN,
+      ingredients: [
+        {
+          recipe_id: recipe_id,
+          public_id: nanoid(),
+          qty: NaN,
+          unitId: "",
+          ingredientId: "",
+          description: "",
+        },
+      ],
+      directions: "",
+      notes: "",
+    },
   });
-  const [selectedIngredients, setSelectedIngredients] = useState<
-    RecipeIngredient[]
-  >([]);
-  const [nextDirection, setNextDirection] = useState("");
-  const [directions, setDirections] = useState<string[]>([]);
 
-  const [notes, setNotes] = useState("");
+  const onError = (errors: FieldErrors<NewRecipeFormValues>) =>
+    console.log("Errors", errors);
 
-  const create = async (e: any) => {
-    e.preventDefault();
+  const { fields, append, remove } = useFieldArray({
+    name: "ingredients",
+    control,
+  });
+
+  const onSubmit: SubmitHandler<NewRecipeFormValues> = async (data) => {
     const res = await fetch(`http://localhost:3000/api/recipes/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        recipeId: nanoid(),
-        name,
-        prepTime,
-        cookTime,
-        serves,
-        notes,
-        selectedIngredients,
-        directions,
-      }),
+      body: JSON.stringify(data),
     });
-    console.log("res", res);
-    router.push("/recipes");
+
+    const json = await res.json();
+
+    if (json.status === 200) {
+      router.push(`/recipes/${recipe_id}`);
+    } else {
+      console.log(json.errors);
+    }
   };
 
-  const handleNextIngredientChange = (event: any) => {
-    const selectedValue = JSON.parse(event.target.value);
-    setNextIngredient(selectedValue);
+  const handleDirectionsChange = (value: string) => {
+    setValue("directions", value);
   };
 
-  const handleRemoveIngredient = (ing: string) => {
-    setSelectedIngredients(
-      selectedIngredients.filter((i) => i.ingredientId !== ing)
-    );
+  const handleNotesChange = (value: string) => {
+    setValue("notes", value);
   };
-
-  const handleRemoveDirection = (dir: string) => {
-    setDirections(directions.filter((curDir) => curDir !== dir));
-  };
-
-  console.log("notes", notes);
 
   return (
-    <form onSubmit={create} className="space-y-4">
-      <h3 className="font-bold text-lg">Details</h3>
-      <div className="flex flex-col space-y-2">
-        <label htmlFor="name" className="font-semibold">
-          Name
-        </label>
-        <input
-          type="text"
-          placeholder="Name"
-          id="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-      </div>
-      <div className="flex flex-col space-y-2">
-        <label htmlFor="preTime" className="font-semibold">
-          Prep Time
-        </label>
-        <input
-          type="number"
-          id="prepTime"
-          value={prepTime}
-          onChange={(e) => setPrepTime(Number(e.target.value))}
-        />
-      </div>
-      <div className="flex flex-col space-y-2">
-        <label htmlFor="cookTime" className="font-semibold">
-          Cook Time
-        </label>
-        <input
-          type="number"
-          id="cookTime"
-          value={cookTime}
-          onChange={(e) => setCookTime(Number(e.target.value))}
-        />
-      </div>
-      <div className="flex flex-col space-y-2">
-        <label htmlFor="serves" className="font-semibold">
-          Serves
-        </label>
-        <input
-          type="number"
-          id="serves"
-          value={serves}
-          onChange={(e) => setServes(Number(e.target.value))}
-        />
-      </div>
-
-      <h3 className="font-bold text-lg">Ingredients</h3>
-      <div>
-        <div className="grid grid-cols-[1fr,100px] gap-2">
-          <div className="flex-1 flex flex-col space-y-2">
-            <label htmlFor="nextIngredient" className="font-semibold">
-              Ingredient
-            </label>
-            <select
-              className="w-full"
-              name="nextIngredient"
-              id="nextIngredient"
-              onChange={handleNextIngredientChange}
-            >
-              <option value="">Select Ingredient</option>
-              {ingredients.map((ingredient: Ingredient) => {
-                return (
-                  <option
-                    key={ingredient.public_id}
-                    value={JSON.stringify({
-                      public_id: ingredient.public_id,
-                      name: ingredient.name,
-                      unit: ingredient.unit,
-                    })}
-                  >
-                    {ingredient.name}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
+    <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-8">
+      <div className="space-y-4">
+        <div className="flex flex-col space-y-2">
+          <label htmlFor="name" className="font-semibold flex gap-1">
+            Name
+          </label>
+          <input
+            className={`w-full rounded-md ${
+              errors.name?.message &&
+              "outline outline-1 outline-red-600 border-red-600"
+            }`}
+            type="text"
+            placeholder="Name"
+            id="name"
+            {...register("name")}
+          />
+          {errors.name && (
+            <span className="text-red-600 italic font-normal">
+              {errors.name.message}
+            </span>
+          )}
+        </div>
+        <div className="grid grid-cols-3 gap-2">
           <div className="flex flex-col space-y-2">
-            <label htmlFor="ingredientQty" className="font-semibold">
-              Qty
+            <label htmlFor="preTime" className="font-semibold">
+              Prep Time
             </label>
             <input
+              className={`rounded-md ${
+                errors.prepTime?.message &&
+                "outline outline-1 outline-red-600 border-red-600"
+              }`}
               type="number"
-              id="ingredientQty"
-              value={ingredientQty}
-              onChange={(e) => setIngredientQty(Number(e.target.value))}
+              id="prepTime"
+              {...register("prepTime", { valueAsNumber: true })}
+            />
+          </div>
+          <div className="flex flex-col space-y-2">
+            <label htmlFor="cookTime" className="font-semibold">
+              Cook Time
+            </label>
+            <input
+              className={`rounded-md ${
+                errors.prepTime?.message &&
+                "outline outline-1 outline-red-600 border-red-600"
+              }`}
+              type="number"
+              id="cookTime"
+              {...register("cookTime", { valueAsNumber: true })}
+            />
+          </div>
+          <div className="flex flex-col space-y-2">
+            <label htmlFor="serves" className="font-semibold">
+              Serves
+            </label>
+            <input
+              className={`rounded-md ${
+                errors.prepTime?.message &&
+                "outline outline-1 outline-red-600 border-red-600"
+              }`}
+              type="number"
+              id="servings"
+              {...register("servings", { valueAsNumber: true })}
             />
           </div>
         </div>
-        <div className="flex flex-col space-y-2">
-          <label htmlFor="ingredientDesc" className="font-semibold">
-            Description
-          </label>
-          <input
-            type="text"
-            id="ingredientDesc"
-            value={ingredientDesc}
-            onChange={(e) => setIngredientDesc(e.target.value)}
-          />
-        </div>
-        <button
-          type="button"
-          className="p-4 rounded border my-3 w-full font-semibold text-purple-600 border-purple-600"
-          onClick={() =>
-            setSelectedIngredients([
-              {
-                ingredientName: nextIngredient.name,
-                ingredientId: nextIngredient.public_id,
-                ingredientQty: ingredientQty,
-                ingredientDesc: ingredientDesc,
-                ingredientUnit: nextIngredient.unit,
-              },
-              ...selectedIngredients,
-            ])
-          }
-        >
-          Add
-        </button>
-        {selectedIngredients.length > 0 && (
-          <div className="py-6">
-            <div className="grid grid-cols-[2fr,1fr] mb-2">
-              <span className="px-2 py-1 pl-0 text-sm font-semibold uppercase">
-                Name
-              </span>
-              <span className="px-2 py-1  text-sm font-semibold uppercase">
-                Qty
-              </span>
-            </div>
-            <div>
-              {selectedIngredients.map((i: RecipeIngredient) => (
-                <div key={i.ingredientId} className="grid grid-cols-[2fr,1fr]">
-                  <div className="flex flex-col p-2 pl-0">
-                    <span className="">{i.ingredientName}</span>
-                    <span className="text-gray-600 text-sm">
-                      {i.ingredientDesc}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="p-2 pr-0 space-x-1">
-                      <span className="">{i.ingredientQty}</span>
-                      <span className="">{i.ingredientUnit}</span>
-                    </div>
-                    <HiXCircle
-                      className="w-6 h-6 text-red-600 cursor-pointer"
-                      onClick={() => handleRemoveIngredient(i.ingredientId)}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
-      <h3 className="font-bold text-lg">Directions</h3>
-      <div>
-        <div className="flex-1 flex flex-col space-y-2">
-          <label htmlFor="directions" className="font-semibold">
-            Directions
-          </label>
-          <textarea
-            id="directions"
-            rows={6}
-            value={nextDirection}
-            onChange={(e) => setNextDirection(e.target.value)}
-          />
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <label className="font-s">Ingredients</label>
+          <button
+            type="button"
+            className="flex gap-1 items-center text-white bg-purple-600 py-1 px-2 rounded-md"
+            onClick={() =>
+              append({
+                public_id: nanoid(),
+                recipe_id: recipe_id,
+                qty: NaN,
+                unitId: "",
+                ingredientId: "",
+                description: "",
+              })
+            }
+          >
+            <FaPlus className="w-4 h-4" />
+            <span>Add</span>
+          </button>
         </div>
-        <button
-          type="button"
-          className="p-4 rounded border my-3 w-full font-semibold text-purple-600 border-purple-600"
-          onClick={() => setDirections([...directions, nextDirection])}
-        >
-          Add
-        </button>
-        {directions.length > 0 && (
-          <div className="py-6 w-full">
-            <div className="list-disc">
-              {directions.map((direction, index) => (
-                <div key={index} className="grid grid-cols-[2fr,auto]">
-                  <div className="flex gap-1">
-                    <span>{index + 1}.</span>
-                    <span>{direction}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <HiXCircle
-                      className="w-6 h-6 text-red-600 cursor-pointer"
-                      onClick={() => handleRemoveDirection(direction)}
-                    />
-                  </div>
+        <div className="flex flex-col gap-4">
+          {fields.map((field, index) => {
+            return (
+              <div key={field.id} className="grid grid-cols-2 gap-1">
+                <div className="col-start-1 space-y-2">
+                  <input
+                    type="number"
+                    id="qty"
+                    placeholder="Qty"
+                    className={`w-full rounded-md ${
+                      errors.ingredients &&
+                      errors.ingredients[index]?.qty?.message &&
+                      "outline outline-1 outline-red-600 border-red-600"
+                    }`}
+                    {...register(`ingredients.${index}.qty` as const, {
+                      valueAsNumber: true,
+                    })}
+                  />
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
+                <div className="col-start-2 space-y-2">
+                  <select
+                    className={`w-full rounded-md ${
+                      errors.ingredients &&
+                      errors.ingredients[index]?.unitId?.message &&
+                      "outline outline-1 outline-red-600 border-red-600"
+                    }`}
+                    id="ingredientUnit"
+                    {...register(`ingredients.${index}.unitId`)}
+                  >
+                    <option value="">Unit</option>
+                    {units.map((unit: Unit) => {
+                      return <option key={unit.public_id}>{unit.abbr}</option>;
+                    })}
+                  </select>
+                </div>
+                <div className="col-span-2 space-y-2">
+                  <select
+                    className={`w-full rounded-md ${
+                      errors.ingredients &&
+                      errors.ingredients[index]?.ingredientId?.message &&
+                      "outline outline-1 outline-red-600 border-red-600"
+                    }`}
+                    id="ingredient"
+                    {...register(`ingredients.${index}.ingredientId`)}
+                  >
+                    <option value="">Ingredient</option>
+                    {ingredients.map((ingredient: Ingredient) => {
+                      return (
+                        <option
+                          key={ingredient.public_id}
+                          value={ingredient.public_id}
+                        >
+                          {ingredient.name}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+                <div className="col-span-2 space-y-2">
+                  <input
+                    type="text"
+                    id="ingredientDesc"
+                    className="w-full rounded-md"
+                    placeholder="e.g. diced, sliced, chopped, etc."
+                    {...register(`ingredients.${index}.description` as const)}
+                  />
+                </div>
+                {fields.length > 1 && (
+                  <button
+                    type="button"
+                    className="col-span-2 p-2 font-semibold cursor-pointer rounded-md text-white bg-red-600"
+                    disabled={fields.length === 1}
+                    onClick={() => remove(index)}
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
-      {/* <h3 className="font-bold text-lg">Notes</h3> */}
-      <NotesInput notes={notes} setNotes={setNotes} />
-      {/* <div className="flex flex-col space-y-2">
+      <div className="flex flex-col space-y-2">
+        <label htmlFor="notes" className="font-semibold">
+          Directions
+        </label>
+        <RichTextInput
+          placeholder={`Add directions for your recipe...
+
+1. Cut the onions.
+2. Try not to cry.
+3. Cry a lot.`}
+          setValue={handleDirectionsChange}
+        />
+      </div>
+      <div className="flex flex-col space-y-2">
         <label htmlFor="notes" className="font-semibold">
           Notes
         </label>
-        <textarea
-          id="notes"
-          rows={6}
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
+        <RichTextInput
+          placeholder="Add some notes for your recipe..."
+          setValue={handleNotesChange}
         />
-      </div> */}
-      <button
-        className="p-4 rounded my-3 w-full font-semibold text-white bg-purple-500"
-        type="submit"
-      >
-        Add
-      </button>
+      </div>
+      <SubmitBtn text="Add" disabled={isSubmitting} />
     </form>
   );
 }

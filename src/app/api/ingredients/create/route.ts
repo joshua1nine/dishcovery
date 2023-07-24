@@ -1,16 +1,15 @@
 import { NextResponse } from "next/server";
 import createIngredient from "@/lib/createIngredient";
-import { nanoid } from "nanoid";
+import { NewIngredient } from "@/db/schema/ingredient";
 
 export async function POST(request: Request) {
-  const res = await request.json();
-  const { public_id, name, category, unit } = res;
+  const res: NewIngredient = await request.json();
+  const { public_id, name, categoryId } = res;
 
   const newIngredient = await createIngredient({
-    public_id: nanoid(12),
+    public_id,
     name,
-    categoryId: category,
-    unitId: unit,
+    categoryId,
   });
 
   return NextResponse.json(

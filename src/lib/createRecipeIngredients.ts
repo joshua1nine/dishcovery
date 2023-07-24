@@ -1,21 +1,19 @@
 import { drizzle } from "drizzle-orm/planetscale-serverless";
 import { connect } from "@planetscale/database";
 import { config } from "../db/config";
-import { recipeIngredients } from "../db/schema";
-import { InferModel } from "drizzle-orm";
 import { nanoid } from "nanoid";
+import { NewRecipeIngredient, recipeIngredient } from "@/db/schema";
 
-type NewRecipeIngredients = InferModel<typeof recipeIngredients, "insert">;
-
-export default async function createRecipe(recipe: NewRecipeIngredients) {
+export default async function createRecipe(recipe: NewRecipeIngredient) {
   const connection = connect(config);
   const db = drizzle(connection);
 
-  await db.insert(recipeIngredients).values({
+  await db.insert(recipeIngredient).values({
     public_id: nanoid(),
-    amount: recipe.amount,
+    qty: recipe.qty,
     description: recipe.description,
-    recipeId: recipe.recipeId,
+    recipe_id: recipe.recipe_id,
     ingredientId: recipe.ingredientId,
+    unitId: recipe.unitId,
   });
 }

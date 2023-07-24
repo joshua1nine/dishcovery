@@ -1,8 +1,12 @@
 import { drizzle } from "drizzle-orm/planetscale-serverless";
 import { connect } from "@planetscale/database";
 import { config } from "../db/config";
-import { categories, ingredients, units } from "../db/schema";
 import { eq } from "drizzle-orm";
+import { ingredient } from "@/db/schema/ingredient";
+import { category } from "@/db/schema/category";
+
+export type GetAllIngredients = Awaited<ReturnType<typeof getAllIngredients>>;
+export type SelectIngredient = GetAllIngredients[0];
 
 export default async function getAllIngredients() {
   const connection = connect(config);
@@ -10,14 +14,14 @@ export default async function getAllIngredients() {
 
   const results = await db
     .select({
-      public_id: ingredients.public_id,
-      name: ingredients.name,
-      category: categories.name,
-      unit: units.name,
+      public_id: ingredient.public_id,
+      name: ingredient.name,
+      category: category.name,
+      categoryId: ingredient.categoryId,
+      density: ingredient.density,
     })
-    .from(ingredients)
-    .innerJoin(categories, eq(ingredients.categoryId, categories.public_id))
-    .innerJoin(units, eq(ingredients.unitId, units.public_id));
+    .from(ingredient)
+    .innerJoin(category, eq(ingredient.categoryId, category.public_id));
 
   return results;
 }
