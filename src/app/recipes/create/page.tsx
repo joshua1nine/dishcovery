@@ -1,9 +1,9 @@
 import BackBtn from "@/components/BackBtn";
-import CreateRecipeForm from "@/components/CreateRecipeForm";
+import CreateRecipeForm from "@/forms/CreateRecipeForm";
 import getAllIngredients from "@/lib/getAllIngredients";
 import getAllUnits from "@/lib/getAllUnits";
 
-export default async function page() {
+export default async function CreateRecipePage() {
   const ingredients = await getAllIngredients();
   const units = await getAllUnits();
 

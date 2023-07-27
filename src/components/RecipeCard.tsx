@@ -1,9 +1,11 @@
 "use client";
 
 import { Recipe } from "@/db/schema";
+import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type ComponentProps } from "react";
+import { FaX } from "react-icons/fa6";
 import { HiXCircle } from "react-icons/hi";
 
 type RecipeCardComponentProps = ComponentProps<"div">;
@@ -19,10 +21,16 @@ type RecipeCardProps = Omit<
   RecipeCardCustomProps;
 
 export const RecipeCard = (props: RecipeCardProps) => {
-  const { recipe, ...componentProps } = props;
+  const { recipe, className, ...componentProps } = props;
   const router = useRouter();
 
   const [isDeleting, setIsDeleting] = useState(false);
+
+  let classes = clsx(
+    className,
+    "flex justify-between items-center w-full overflow-hidden rounded hover:bg-purple-50 cursor-pointer",
+    isDeleting && "bg-gray-100 animate-pulse"
+  );
 
   const handleDelete = async (id: Recipe["public_id"]) => {
     setIsDeleting(true);
@@ -44,23 +52,27 @@ export const RecipeCard = (props: RecipeCardProps) => {
   };
 
   return (
-    <div
-      {...componentProps}
-      className="flex justify-between items-center w-full p-2 rounded hover:bg-purple-50 cursor-pointer"
-    >
-      <Link href={`/recipes/${recipe.public_id}`}>
-        <div>
-          <p className="font-bold text-lg">{recipe.name}</p>
-          <span className="text-sm text-gray-600">
-            Prep: {recipe.prepTime} | Cook: {recipe.cookTime} | Serves:{" "}
-            {recipe.servings}
-          </span>
-        </div>
+    <div {...componentProps} className={classes}>
+      <Link
+        href={`/recipes/${recipe.public_id}`}
+        className="bg-purple-50 p-3 flex-1"
+      >
+        <p className="font-bold text-lg text-purple-950">{recipe.name}</p>
+        <span className="text-sm text-purple-800">
+          Prep: {recipe.prepTime} | Cook: {recipe.cookTime} | Serves:{" "}
+          {recipe.servings}
+        </span>
       </Link>
-      <HiXCircle
+      <div
+        className="text-white bg-purple-500 self-stretch p-3 flex justify-center items-center cursor-pointer"
+        onClick={() => handleDelete(recipe.public_id)}
+      >
+        <FaX />
+      </div>
+      {/* <HiXCircle
         className="w-6 h-6 text-red-600"
         onClick={() => handleDelete(recipe.public_id)}
-      />
+      /> */}
     </div>
   );
 };

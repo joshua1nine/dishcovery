@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { nanoid } from "nanoid";
-import RichTextInput from "./RichTextInput";
+import RichTextInput from "../components/RichTextInput";
 import { insertRecipeIngredientSchema } from "@/db/schema/recipeIngredient";
 import { Ingredient, insertIngredientSchema } from "@/db/schema/ingredient";
 import { Unit } from "@/db/schema/unit";
@@ -16,8 +16,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { insertRecipeSchema } from "@/db/schema/recipe";
 import { FaPlus } from "react-icons/fa6";
-import SubmitBtn from "./SubmitBtn";
+import SubmitBtn from "../components/SubmitBtn";
 import { GetAllIngredients } from "@/lib/getAllIngredients";
+import { ComponentProps } from "react";
+
+type CreateRecipeFormComponentProps = ComponentProps<"form">;
+
+type CreateRecipeFormCustomProps = {
+  ingredients: Ingredient[];
+  units: Unit[];
+};
+
+export type CreateRecipeFormProps = Omit<
+  CreateRecipeFormComponentProps,
+  keyof CreateRecipeFormCustomProps
+> &
+  CreateRecipeFormCustomProps;
 
 const newRecipeFormSchema = insertRecipeSchema.extend({
   ingredients: z.array(insertRecipeIngredientSchema),
@@ -27,13 +41,8 @@ export type NewRecipeFormValues = z.infer<typeof newRecipeFormSchema>;
 
 const recipe_id = nanoid();
 
-export default function CreateRecipeForm({
-  ingredients,
-  units,
-}: {
-  ingredients: Ingredient[];
-  units: Unit[];
-}) {
+export default function CreateRecipeForm(props: CreateRecipeFormProps) {
+  const { ingredients, units, ...componentProps } = props;
   const router = useRouter();
 
   const {
@@ -101,7 +110,11 @@ export default function CreateRecipeForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-8">
+    <form
+      onSubmit={handleSubmit(onSubmit, onError)}
+      {...componentProps}
+      className="space-y-8"
+    >
       <div className="space-y-4">
         <div className="flex flex-col space-y-2">
           <label htmlFor="name" className="font-semibold flex gap-1">
@@ -220,7 +233,11 @@ export default function CreateRecipeForm({
                   >
                     <option value="">Unit</option>
                     {units.map((unit: Unit) => {
-                      return <option key={unit.public_id}>{unit.abbr}</option>;
+                      return (
+                        <option key={unit.public_id} value={unit.public_id}>
+                          {unit.abbr}
+                        </option>
+                      );
                     })}
                   </select>
                 </div>

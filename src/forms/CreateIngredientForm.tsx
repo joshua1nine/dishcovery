@@ -7,7 +7,7 @@ import { FieldErrors, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Category } from "@/db/schema/category";
 import { NewIngredient, insertIngredientSchema } from "@/db/schema/ingredient";
-import SubmitBtn from "./SubmitBtn";
+import SubmitBtn from "../components/SubmitBtn";
 
 type CreateIngredientFormComponentProps = ComponentProps<"form">;
 
@@ -21,9 +21,8 @@ export type CreateIngredientFormProps = Omit<
 > &
   CreateIngredientFormCustomProps;
 
-export default function CreateIngredientForm({
-  categories,
-}: CreateIngredientFormProps) {
+export default function CreateIngredientForm(props: CreateIngredientFormProps) {
+  const { categories, ...componentProps } = props;
   const router = useRouter();
 
   const {
@@ -36,7 +35,7 @@ export default function CreateIngredientForm({
   });
 
   const onSubmit: SubmitHandler<NewIngredient> = async (data) => {
-    const res = await fetch(`http://localhost:3000/api/ingredients/create`, {
+    await fetch(`http://localhost:3000/api/ingredients/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -59,23 +58,29 @@ export default function CreateIngredientForm({
     <form
       onSubmit={handleSubmit(onSubmit, onError)}
       noValidate
+      {...componentProps}
       className="space-y-4"
     >
       <input type="hidden" value={nanoid()} {...register("public_id")} />
-      <input
-        className={`w-full rounded-md ${
-          errors.name?.message &&
-          "outline outline-1 outline-red-600 border-red-600"
-        }`}
-        type="text"
-        id="name"
-        {...register("name")}
-      />
-      {errors.name && (
-        <span className="text-red-600 italic font-normal">
-          {errors.name.message}
-        </span>
-      )}
+      <div className="flex flex-col space-y-2">
+        <label htmlFor="name" className="font-semibold flex gap-1">
+          Name
+        </label>
+        <input
+          className={`w-full rounded-md ${
+            errors.name?.message &&
+            "outline outline-1 outline-red-600 border-red-600"
+          }`}
+          type="text"
+          id="name"
+          {...register("name")}
+        />
+        {errors.name && (
+          <span className="text-red-600 italic font-normal">
+            {errors.name.message}
+          </span>
+        )}
+      </div>
       <select
         className={`w-full rounded-md ${
           errors.categoryId?.message &&

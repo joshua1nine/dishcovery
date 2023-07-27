@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import type { ComponentProps } from "react";
 import { FaSpinner } from "react-icons/fa6";
 
@@ -14,14 +15,17 @@ export type SubmitBtnProps = Omit<
 > &
   SubmitBtnCustomProps;
 
-const SubmitBtn = ({ text, disabled }: SubmitBtnProps) => {
+const SubmitBtn = (props: SubmitBtnProps) => {
+  const { text, disabled, className, ...componentProps } = props;
+
+  let classes = clsx(
+    className,
+    "p-4 flex items-center justify-center h-12 rounded my-3 w-full font-semibold",
+    disabled ? "bg-gray-200 text-gray-600" : "text-white bg-purple-500"
+  );
+
   return (
-    <button
-      className={`p-4 flex items-center justify-center h-12 rounded my-3 w-full font-semibold  ${
-        disabled ? "bg-gray-200 text-gray-600" : "text-white bg-purple-500"
-      }`}
-      type="submit"
-    >
+    <button {...componentProps} className={classes} type="submit">
       {disabled ? <FaSpinner className="animate-spin" /> : text}
     </button>
   );

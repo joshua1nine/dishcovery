@@ -1,5 +1,5 @@
 import BackBtn from "@/components/BackBtn";
-import CreateRecipeForm from "@/components/CreateRecipeForm";
+import CreateRecipeForm from "@/forms/CreateRecipeForm";
 import EditRecipeForm from "@/components/EditRecipeForm";
 import getAllIngredients from "@/lib/getAllIngredients";
 import getAllUnits from "@/lib/getAllUnits";

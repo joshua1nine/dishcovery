@@ -1,6 +1,6 @@
-import { InsertCategory } from "../schema";
+import { NewCategory } from "../schema";
 
-export const mockCategories: InsertCategory[] = [
+export const mockCategories: NewCategory[] = [
   {
     public_id: "65sC9lGGdfgKnOIafPYJO",
     name: "Produce",

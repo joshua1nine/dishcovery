@@ -10,9 +10,7 @@ import {
   FaRotateRight,
   FaUnderline,
 } from "react-icons/fa6";
-import { Dispatch, SetStateAction } from "react";
 import Placeholder from "@tiptap/extension-placeholder";
-import { FieldValues, UseFormSetValue } from "react-hook-form";
 
 const MenuBar = ({ editor }: { editor: Editor | null }) => {
   if (!editor) {

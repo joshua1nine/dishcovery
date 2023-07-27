@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import createRecipe from "@/lib/createRecipe";
 import createRecipeIngredients from "@/lib/createRecipeIngredients";
-import { NewRecipeFormValues } from "@/components/CreateRecipeForm";
+import { NewRecipeFormValues } from "@/forms/CreateRecipeForm";
 
 export async function POST(request: Request) {
   const res: NewRecipeFormValues = await request.json();
