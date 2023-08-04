@@ -1,8 +1,6 @@
 import AddBtn from "@/components/AddBtn";
 import BackBtn from "@/components/BackBtn";
-import CreateIngredientForm from "@/forms/CreateIngredientForm";
 import IngredientCard from "@/components/IngredientCard";
-import getAllCategories from "@/lib/getAllCategories";
 import getAllIngredients from "@/lib/getAllIngredients";
 
 export default async function Ingredients() {
