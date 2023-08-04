@@ -1,4 +1,4 @@
-import { NewIngredient } from "../schema/ingredient";
+import { NewIngredient } from "../schema";
 
 export const mockIngredients: NewIngredient[] = [
   {

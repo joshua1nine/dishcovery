@@ -1,4 +1,4 @@
-import { NewRecipe } from "../schema/recipe";
+import { NewRecipe } from "../schema";
 
 export const mockRecipes: NewRecipe[] = [
   {
@@ -7,7 +7,7 @@ export const mockRecipes: NewRecipe[] = [
     prepTime: 15,
     servings: 6,
     directions:
-      "<ol><li><p>In a large bowl, toss all ingredients together excetp dressing.</p></li><li><p>Divide between individual serving plates, and drizzle with desired amount of dressing.</p></li></ol>",
+      "<ol><li><p>In a large bowl, toss all ingredients together except dressing.</p></li><li><p>Divide between individual serving plates, and drizzle with desired amount of dressing.</p></li></ol>",
     notes:
       "<p>Grilled steak tips are reserved form grilled steakhouse steak tips recipe.</p>",
   },

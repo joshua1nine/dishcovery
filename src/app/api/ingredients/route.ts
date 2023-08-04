@@ -1,6 +1,10 @@
 import findIngredient from "@/lib/findIngredient";
 import { db } from "@/server/db";
-import { Ingredient, NewIngredient, ingredient } from "@/server/db/schema";
+import {
+  Ingredient,
+  NewIngredient,
+  ingredient,
+} from "../../../../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 

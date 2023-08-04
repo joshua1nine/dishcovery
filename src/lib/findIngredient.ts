@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/server/db";
-import { Ingredient, ingredient, recipeIngredient } from "@/server/db/schema";
+import { Ingredient, ingredient, recipeIngredient } from "../../drizzle/schema";
 
 export default async function findIngredient(id: Ingredient["public_id"]) {
   // const dbIngredient = await db.query.ingredient.findFirst({

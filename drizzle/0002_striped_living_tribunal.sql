@@ -1,2 +1,0 @@
-ALTER TABLE `ingredients` ADD `public_id` varchar(12) DEFAULT 'xKMAcke9QmEI' NOT NULL;--> statement-breakpoint
-ALTER TABLE `ingredients` ADD CONSTRAINT `ingredients_public_id_unique` UNIQUE(`public_id`);

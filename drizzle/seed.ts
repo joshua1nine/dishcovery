@@ -1,5 +1,9 @@
+import "dotenv/config";
+
+import { db } from "../src/server/db";
+
 import { sql } from "drizzle-orm";
-import { db } from ".";
+
 import { category, ingredient, recipe, recipeIngredient, unit } from "./schema";
 import { mockCategories } from "./mocks/categories";
 import { mockUnits } from "./mocks/units";
@@ -7,7 +11,7 @@ import { mockIngredients } from "./mocks/ingredients";
 import { mockRecipes } from "./mocks/recipes";
 import { mockRecipeIngredients } from "./mocks/recipeIngredients";
 
-export async function seed() {
+async function seed() {
   await db.delete(category);
   await db.delete(unit);
   await db.delete(recipeIngredient);
@@ -40,3 +44,10 @@ export async function seed() {
     await db.insert(recipeIngredient).values(mockRecipeIngredient);
   }
 }
+
+const seedData = () => Promise.all([seed()]);
+
+seedData().catch((e) => {
+  console.log(e);
+  process.exit(1);
+});

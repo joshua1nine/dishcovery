@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/server/db";
-import { Ingredient, ingredient } from "@/server/db/schema";
+import { Ingredient, ingredient } from "../../drizzle/schema";
 
 export default async function deleteIngredient(id: Ingredient["public_id"]) {
   const result = await db

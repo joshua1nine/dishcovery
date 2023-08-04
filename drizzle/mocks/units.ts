@@ -1,6 +1,6 @@
-import { InsertUnit } from "../schema";
+import { NewUnit } from "../schema";
 
-export const mockUnits: InsertUnit[] = [
+export const mockUnits: NewUnit[] = [
   {
     public_id: "aSxPParOmOFVN8j3hUFeS",
     abbr: "g",
